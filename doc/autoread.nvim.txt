@@ -1,0 +1,104 @@
+*autoread.txt*  Automatically reload files when they change outside Neovim
+
+MIT License Copyright (c) 2025 manuuurino
+
+==============================================================================
+INTRODUCTION                                                    *autoread.nvim*
+
+autoread.nvim automatically reloads files when they are changed outside of
+Neovim, with configurable check intervals and cursor behavior.
+
+==============================================================================
+SETUP                                                          *autoread-setup*
+
+Install with your favorite package manager. Example with lazy.nvim:
+>lua
+    {
+        "manuuurino/autoread.nvim",
+        cmd = "Autoread",
+        opts = {},
+    }
+<
+
+Configure with setup():
+>lua
+    require("autoread").setup({
+        interval = 500,           -- Check interval in milliseconds
+        notify_on_change = true,  -- Show notifications when files change
+        cursor_behavior = "preserve", -- How to handle cursor after reload
+    })
+<
+
+==============================================================================
+COMMANDS                                                      *autoread-commands*
+
+:Autoread [interval]                                               *:Autoread*
+    Toggle autoread on/off. With [interval]: updates timer if enabled,
+    enables with interval if disabled.
+
+:AutoreadOn [interval]                                           *:AutoreadOn*
+    Enable autoread with optional temporary interval in milliseconds.
+
+:AutoreadOff                                                     *:AutoreadOff*
+    Disable autoread.
+
+:AutoreadCursorBehavior {behavior}                     *:AutoreadCursorBehavior*
+    Set cursor behavior after reload.
+    {behavior} can be: "preserve", "scroll_down", or "none"
+
+==============================================================================
+API                                                              *autoread-api*
+
+autoread.enable([interval])                                  *autoread.enable()*
+    Enable autoread with optional temporary interval.
+
+autoread.disable()                                          *autoread.disable()*
+    Disable autoread.
+
+autoread.toggle([interval])                                  *autoread.toggle()*
+    Toggle autoread with optional temporary interval.
+
+autoread.is_enabled()                                    *autoread.is_enabled()*
+    Check if autoread is enabled.
+
+autoread.get_interval()                                *autoread.get_interval()*
+    Get configured interval.
+
+autoread.set_interval(interval)                        *autoread.set_interval()*
+    Set new default interval in configuration.
+
+autoread.update_interval(interval)                  *autoread.update_interval()*
+    Updates the current timer interval temporarily.
+
+autoread.set_cursor_behavior(behavior)          *autoread.set_cursor_behavior()*
+    Set cursor behavior ("preserve", "scroll_down", or "none").
+
+==============================================================================
+EVENTS                                                        *autoread-events*
+
+The plugin triggers these User events:
+
+AutoreadPreCheck                                          *AutoreadPreCheck*
+    Before checking files for changes
+
+AutoreadPostCheck                                        *AutoreadPostCheck*
+    After checking files for changes
+
+AutoreadPreReload                                        *AutoreadPreReload*
+    Before reloading changed files
+
+AutoreadPostReload                                      *AutoreadPostReload*
+    After reloading changed files
+
+Example of using events:
+>lua
+    vim.api.nvim_create_autocmd("User", {
+        pattern = "AutoreadPostReload",
+        callback = function(event)
+            print("File reloaded:", event.data.file)
+        end,
+    })
+<
+
+==============================================================================
+ vim:tw=78:ts=8:noet:ft=help:norl:
