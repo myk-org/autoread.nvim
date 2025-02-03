@@ -2,12 +2,14 @@
 
 A Neovim plugin that automatically reloads files when they are changed outside of the editor.
 
+A pure-lua implementation that doesn't uses external binaries.
+
 ## Features
 
-- Automatically reload files when they change on disk
-- Configurable check interval
+- Wakes neovim up to reload files in a given interval
 - Optional notifications when files are reloaded
 - Simple commands to enable/disable/toggle auto-reload
+- Cursor position behavior after reload, like always scroll to the bottom
 
 ## Installation
 
@@ -30,7 +32,7 @@ require("autoread").setup({
     interval = 500,
     -- Show notifications when files change
     notify_on_change = true,
-     -- How to handle cursor position after reload: "preserve", "scroll_down", or "none"
+    -- How to handle cursor position after reload: "preserve", "scroll_down", or "none"
     cursor_behavior = "preserve",
 })
 ```
@@ -93,6 +95,30 @@ vim.api.nvim_create_autocmd("User", {
     end,
 })
 ```
+
+## How it works
+
+> NOTE: The plugin **does not** setup a file watcher, instead it lets
+> neovim handle it, by just poking it to wake up.
+
+Neovim uses the `checktime` command to detect file changes, see `:h checktime`.
+This also gets triggered by itself, but only on an update, like a window refocus.
+
+This plugin makes a somewhat wrapper for the `checktime` command, by calling it on every interval
+with some additional features, like scroll to the bottom.
+
+## Known issues
+
+### Why might the cursor position jump to the top sometimes?
+
+I discovered an edge case where the cursor position resets if the check (called with `checktime`)
+happens exactly when a file is being cleared/written. When this happens, the buffer temporarily
+becomes empty, causing the cursor to jump to the top,
+also firing a `FileChangedShellPost` event (used in the script to determine a real file change).
+And once the file has been fully written, it triggers another file change event.
+
+With the `cursor_behavior = "preserve"` we keep a track of the cursor position
+and apply it only then when the file is not empty.
 
 ## License
 
