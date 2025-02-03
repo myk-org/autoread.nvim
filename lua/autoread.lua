@@ -101,6 +101,18 @@ function M.get_interval()
 end
 
 ---@param interval integer? Temporary interval in ms that doesn't affect the config
+function M.update_interval(interval)
+	if M.is_enabled() then
+		M._timer:stop()
+		M._timer:start(
+			0,
+			interval or M.config.interval,
+			vim.schedule_wrap(trigger_reload)
+		)
+	end
+end
+
+---@param interval integer? Temporary interval in ms that doesn't affect the config
 function M.enable(interval)
 	if interval then
 		assert_interval(interval)
@@ -118,18 +130,6 @@ function M.disable()
 	if M.is_enabled() then
 		M._timer:close()
 		M._timer = nil
-	end
-end
-
----@param interval integer? Temporary interval in ms that doesn't affect the config
-function M.update_interval(interval)
-	if M.is_enabled() then
-		M._timer:stop()
-		M._timer:start(
-			0,
-			interval or M.config.interval,
-			vim.schedule_wrap(trigger_reload)
-		)
 	end
 end
 
@@ -270,27 +270,22 @@ local function create_user_commands()
 	})
 end
 
----@param user_config Autoread.Config?
-local function validate_config(user_config)
-	---@type Autoread.ConfigStrict
-	local config =
-		vim.tbl_deep_extend("force", default_config, user_config or {})
-
+local function validate_config(config)
 	assert_interval(config.interval)
+
 	assert(
 		type(config.notify_on_change) == "boolean",
 		"notify_on_change must be a boolean"
 	)
 
 	assert_cursor_behavior(config.cursor_behavior)
-
-	return config
 end
 
 ---@param user_config Autoread.Config?
 function M.setup(user_config)
-	M.config = validate_config(user_config)
+	M.config = vim.tbl_deep_extend("force", default_config, user_config or {})
 
+	validate_config(user_config)
 	create_user_commands()
 	setup_events()
 end
