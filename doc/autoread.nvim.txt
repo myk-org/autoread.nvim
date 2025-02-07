@@ -40,25 +40,40 @@ COMMANDS                                                      *autoread-commands
     Enable autoread with optional temporary interval in milliseconds.
 
 :AutoreadOff                                                     *:AutoreadOff*
-    Disable autoread.
+    Disable autoread for current buffer.
+
+:AutoreadAllOff                                               *:AutoreadAllOff*
+    Disable autoread for all buffers.
 
 :AutoreadCursorBehavior {behavior}                     *:AutoreadCursorBehavior*
-    Set cursor behavior after reload.
+    Set cursor behavior for current buffer.
+    {behavior} can be: "preserve", "scroll_down", or "none"
+
+:AutoreadGlobalCursorBehavior {behavior}       *:AutoreadGlobalCursorBehavior*
+    Set cursor behavior for all buffers.
     {behavior} can be: "preserve", "scroll_down", or "none"
 
 ==============================================================================
 API                                                              *autoread-api*
 
-autoread.enable([interval])                                  *autoread.enable()*
-    Enable autoread with optional temporary interval.
+autoread.enable([interval], [bufnr])                         *autoread.enable()*
+    Enable autoread with optional temporary interval and buffer number.
+    [interval] optional check interval in milliseconds
+    [bufnr] optional buffer number (default: current buffer)
 
-autoread.disable()                                          *autoread.disable()*
-    Disable autoread.
+autoread.disable([bufnr])                                   *autoread.disable()*
+    Disable autoread for current or specific buffer.
+    [bufnr] optional buffer number (default: current buffer)
 
-autoread.toggle([interval])                                  *autoread.toggle()*
-    Toggle autoread with optional temporary interval.
+autoread.toggle([interval], [bufnr])                         *autoread.toggle()*
+    Toggle autoread with optional temporary interval and buffer number.
+    [interval] optional check interval in milliseconds
+    [bufnr] optional buffer number (default: current buffer)
 
-autoread.is_enabled()                                    *autoread.is_enabled()*
+autoread.is_enabled([bufnr])                             *autoread.is_enabled()*
+    Check if autoread is enabled for current or specific buffer.
+    [bufnr] optional buffer number (default: current buffer)
+    Returns: boolean
     Check if autoread is enabled.
 
 autoread.get_interval()                                *autoread.get_interval()*
@@ -70,7 +85,17 @@ autoread.set_interval(interval)                        *autoread.set_interval()*
 autoread.update_interval(interval)                  *autoread.update_interval()*
     Updates the current timer interval temporarily.
 
-autoread.set_cursor_behavior(behavior)          *autoread.set_cursor_behavior()*
+autoread.set_cursor_behavior(behavior, [bufnr])     *autoread.set_cursor_behavior()*
+    Set cursor behavior for a specific buffer.
+    {behavior} can be: "preserve", "scroll_down", or "none"
+    [bufnr] optional buffer number (default: current buffer)
+
+autoread.set_global_cursor_behavior(behavior) *autoread.set_global_cursor_behavior()*
+    Set cursor behavior for all buffers.
+    {behavior} can be: "preserve", "scroll_down", or "none"
+
+autoread.disable_all()                                    *autoread.disable_all()*
+    Disable autoread for all buffers.
     Set cursor behavior ("preserve", "scroll_down", or "none").
 
 ==============================================================================

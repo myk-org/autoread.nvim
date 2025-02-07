@@ -42,38 +42,10 @@ require("autoread").setup({
 - `:Autoread [interval]` - Toggle autoread on/off with optional **temporary** interval in milliseconds
   When providing an interval, it will update the interval if enabled or enable with that interval if disabled, rather than toggling off.
 - `:AutoreadOn [interval]` - Enable autoread with optional **temporary** interval in milliseconds
-- `:AutoreadOff` - Disable autoread
-- `:AutoreadCursorBehavior <behavior>` - Set cursor behavior ("preserve", "scroll_down", or "none")
-
-## API
-
-```lua
-local autoread = require("autoread")
-
--- Enable autoread with optional temporary interval
-autoread.enable(1000) -- Check every 1000ms temporarily
-
--- Disable autoread
-autoread.disable()
-
--- Toggle autoread with optional temporary interval
-autoread.toggle(1000) -- Toggle with temporary 1000ms interval
-
--- Check if enabled
-autoread.is_enabled()
-
--- Get configured interval
-autoread.get_interval()
-
--- Set new default interval in configuration
-autoread.set_interval(2000)
-
--- Updates the current timer to the desired interval temporarily
-autoread.update_interval(500)
-
--- Set cursor behavior
-autoread.set_cursor_behavior("preserve") -- "preserve", "scroll_down", or "none"
-```
+- `:AutoreadOff` - Disable autoread for current buffer
+- `:AutoreadAllOff` - Disable autoread for all buffers
+- `:AutoreadCursorBehavior <behavior>` - Set cursor behavior for current buffer ("preserve", "scroll_down", or "none")
+- `:AutoreadGlobalCursorBehavior <behavior>` - Set cursor behavior for all buffers ("preserve", "scroll_down", or "none")
 
 ### Events
 
