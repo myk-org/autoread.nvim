@@ -96,9 +96,13 @@ local function trigger_reload()
 	exec_autocmds("AutoreadPreCheck")
 	for bufnr, _ in pairs(M._monitored_buffers) do
 		if vim.api.nvim_buf_is_valid(bufnr) then
-			vim.api.nvim_buf_call(bufnr, function()
+			local ok, _ = pcall(vim.api.nvim_buf_call, bufnr, function()
 				vim.api.nvim_command("checktime")
 			end)
+			if not ok then
+				-- Buffer became invalid during call, remove from monitored list
+				M._monitored_buffers[bufnr] = nil
+			end
 		else
 			-- Buffer no longer valid, remove from monitored list
 			M._monitored_buffers[bufnr] = nil
